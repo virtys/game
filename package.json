@@ -2,12 +2,12 @@
   "name": "GameVirtys",
   "version": "1.0.0",
   "description": "",
-  "author": "sergey penyavsky <sergey.blade14@gmail.com>",
+  "author": "Sergey Penyavsky <sergey.blade14@gmail.com>",
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
     "deploy": "webpack --config webpack.production.config.js",
-    "test": "eslint ./src/**/**.js"
+    "test": ""
   },
   "license": "MIT",
   "devDependencies": {
@@ -17,10 +17,9 @@
     "babel-preset-es2015": "^6.18.0",
     "browser-sync": "^2.18.6",
     "browser-sync-webpack-plugin": "^1.1.3",
-    "eslint": "^3.13.1",
-    "eslint-config-standard": "^7.0.1",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.3",
+    "eslint-plugin-import": "^2.2.0",
     "expose-loader": "^0.7.1",
     "webpack": "^2.2.0"
   },

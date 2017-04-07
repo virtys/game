@@ -36,7 +36,7 @@ Navigate to the cloned repo’s directory.
 
 Run:
 
-```npm install``` 
+```npm install```
 
 or if you choose yarn, just run ```yarn```
 
@@ -67,3 +67,10 @@ Big thanks to this great repos:
 https://github.com/belohlavek/phaser-es6-boilerplate
 
 https://github.com/cstuncsik/phaser-es6-demo
+
+"test": "eslint ./src/**/**.js"
+
+"eslint": "^3.13.1",
+"eslint-config-standard": "^7.0.1",
+"eslint-plugin-promise": "^3.4.0",
+"eslint-plugin-standard": "^2.0.1",
