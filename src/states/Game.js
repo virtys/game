@@ -1,15 +1,15 @@
-import Phaser from 'phaser'
-import Player from '../sprites/Player'
-import Enemy from '../sprites/Enemy'
-import StatusBar from '../sprites/StatusBar'
-import Meteor from '../sprites/Meteor'
+import Phaser from 'phaser';
+import Player from '../sprites/Player';
+import Aliens from '../groups/Aliens';
+import Meteors from '../groups/Meteors';
+import PowerUps from '../groups/PowerUps';
+import StatusBar from '../groups/StatusBar';
 
 export default class extends Phaser.State {
 
     create() {
+
         this.background = this.add.tileSprite(0, 0, 800, 400, 'background');
-        this.enemies = this.add.group();
-        this.enemies.enableBody = true;
 
         this.player = new Player({
             game: this.game,
@@ -17,26 +17,19 @@ export default class extends Phaser.State {
             y: this.game.world.centerY,
             health: 100,
             asset: 'spaceship',
-            frame: 1
+            frame: 1,
         });
 
         this.game.stage.addChild(this.player);
 
         this.bar = new StatusBar({
             game: this.game,
-            player: this.player
+            player: this.player,
         });
 
-        this.enemyTime = 0;
-        this.enemyInterval = 1.8;
-        this.enemyShootTime = 0;
-        this.enemyShootInterval = 1;
-
-        this.game.time.events.loop(Phaser.Timer.SECOND * 10, () => {
-            if (this.enemyInterval > 0.2) {
-                this.enemyInterval -= 0.1;
-            }
-        });
+        this.aliens = new Aliens(this.game, this.player);
+        this.meteors = new Meteors(this.game, this.player);
+        this.powerUps = new PowerUps(this.game, 'health');
 
         // Create overlay
         this.overlayBitmap = this.add.bitmapData(this.game.width, this.game.height);
@@ -46,7 +39,7 @@ export default class extends Phaser.State {
         this.overlay.visible = false;
         this.overlay.alpha = 0.75;
 
-        //sounds
+        // sounds
         this.music = this.game.add.audio('playMusic');
         // this.bulletHitSound = this.add.sound('bulletHit');
         // this.enemyExplosionSound = this.add.sound('enemyExplosion');
@@ -57,57 +50,16 @@ export default class extends Phaser.State {
 
     update() {
 
-        this.enemyTime += this.game.time.physicsElapsed;
-        this.enemyShootTime += this.game.time.physicsElapsed;
-
-        if (this.enemyTime > this.enemyInterval) {
-            this.enemyTime = 0;
-            this.createEnemy({
-                game: this.game,
-                x: this.game.rnd.integerInRange(6, 76) * 10,
-                y: 0,
-                speed: {
-                    x: this.game.rnd.integerInRange(5, 10) * 10 * (Math.random() > 0.5 ? 1 : -1),
-                    y: this.game.rnd.integerInRange(5, 10) * 10
-                },
-                health: 9,
-                bulletSpeed: this.game.rnd.integerInRange(10, 20) * 10,
-                asset: 'alien'
-            });
-        }
-
-        if (this.enemyShootTime > this.enemyShootInterval) {
-            this.enemyShootTime = 0;
-            this.enemies.forEachAlive(enemy => enemy.shoot());
-            if (!this.player.alive) {
-                this.game.world.bringToTop(this.overlay);
-            }
-        }
-
-        this.game.physics.arcade.overlap(this.player.bullets, this.enemies, this.hitEnemy, null, this);
-        this.game.physics.arcade.overlap(this.player, this.enemies, this.crashEnemy, null, this);
-
-        this.enemies.forEach(enemy => this.game.physics.arcade.overlap(this.player, enemy.bullets, this.hitPlayer, null, this));
+        this.game.physics.arcade.overlap(this.player.weapon, this.aliens, this.hitEnemy, null, this);
+        this.game.physics.arcade.overlap(this.player, this.aliens, this.crashEnemy, null, this);
+        this.game.physics.arcade.overlap(this.player, this.meteors, this.crashEnemy, null, this);
+        this.aliens.forEach(alien => this.game.physics.arcade.overlap(this.player, alien.weapon, this.hitPlayer, null, this));
 
         this.background.tilePosition.x -= 2;
     }
 
-    createEnemy(data) {
-        let enemy = this.enemies.getFirstExists(false);
-
-        if (!enemy) {
-            enemy = new Enemy(data);
-            this.enemies.add(enemy);
-        }
-        enemy.reset(data);
-    }
-
     hitEffect(obj, color) {
-        let tween = this.game.add.tween(obj);
-        let emitter = this.game.add.emitter();
-        let emitterPhysicsTime = 0;
-        let particleSpeed = 100;
-        let maxParticles = 10;
+        const tween = this.game.add.tween(obj);
 
         tween.to({
             tint: 0xff0000
@@ -117,28 +69,6 @@ export default class extends Phaser.State {
         });
         tween.start();
 
-        emitter.x = obj.x;
-        emitter.y = obj.y;
-        emitter.gravity = 0;
-        emitter.makeParticles('particle');
-
-        if (obj.health <= 0) {
-            particleSpeed = 200;
-            maxParticles = 40;
-            color = 0xff0000;
-        }
-
-        emitter.minParticleSpeed.setTo(-particleSpeed, -particleSpeed);
-        emitter.maxParticleSpeed.setTo(particleSpeed, particleSpeed);
-        emitter.start(true, 500, null, maxParticles);
-        emitter.update = () => {
-            emitterPhysicsTime += this.game.time.physicsElapsed;
-            if (emitterPhysicsTime >= 0.6) {
-                emitterPhysicsTime = 0;
-                emitter.destroy();
-            }
-        };
-        emitter.forEach(particle => particle.tint = color);
         if (!this.player.alive) {
             this.game.world.bringToTop(this.overlay);
         }
@@ -159,7 +89,7 @@ export default class extends Phaser.State {
         // this.bulletHitSound.play("", 0, 0.5);
         player.damage(bullet.health);
         this.bar.updateHealth();
-        this.hitEffect(player, bullet.tint);
+        this.hitEffect(player, 0xff0000);
         if (!player.alive) {
             // this.playerExplosionSound.play();
             this.gameOver();
@@ -168,8 +98,8 @@ export default class extends Phaser.State {
     }
 
     crashEnemy(player, enemy) {
-        enemy.damage(enemy.health);
         player.damage(enemy.health);
+        enemy.damage(enemy.health);
         this.hitEffect(player);
         this.hitEffect(enemy);
         if (!enemy.alive) {
@@ -186,11 +116,17 @@ export default class extends Phaser.State {
         this.game.time.slowMotion = 3;
         this.overlay.visible = true;
         this.game.world.bringToTop(this.overlay);
-        let timer = this.game.time.create(this.game, true);
+        const timer = this.game.time.create(this.game, true);
         timer.add(3000, () => {
             this.music.stop();
             this.gameOverSound.play();
-            this.game.state.start('Over');
+            let text = game.add.text(this.game.world.centerX, this.game.world.centerY , "Game Over", {
+              font: "bold 32px Arial",
+              fill: "#fff",
+              align: "center",
+            });
+            text.anchor.set(0.5);
+            // this.game.state.start('Over');
         });
         timer.start();
     }

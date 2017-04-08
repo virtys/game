@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Bullet from './Bullet';
+import Weapon from '../groups/Weapon';
 
 export default class Enemy extends Phaser.Sprite {
 
@@ -14,18 +14,12 @@ export default class Enemy extends Phaser.Sprite {
         this.maxHealth = health;
         this.game.physics.arcade.enable(this);
 
-        // this.animations.add('spinning', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 30, true);
-        // this.play('spinning');
-
-        this.bullets = this.game.add.group();
-        this.bullets.enableBody = true;
         this.bulletSpeed = - bulletSpeed;
-
         // this.shotSound = this.game.add.sound('enemyShot');
+        this.weapon = new Weapon(this.game, this.bulletSpeed);
     }
 
     update() {
-
         if (this.position.y < 0.04 * this.game.world.height) {
             this.position.y = 0.04 * this.game.world.height + 2;
             this.body.velocity.y *= -1;
@@ -34,34 +28,10 @@ export default class Enemy extends Phaser.Sprite {
             this.position.y = 0.96 * this.game.world.height - 2;
             this.body.velocity.y *= -1;
         }
-
-        if (this.position.y - this.height / 2 > this.game.world.height) {
-            this.kill();
-        }
     }
 
-    shoot() {
-
-        // this.shotSound.play("",0,0.5);
-
-        let bullet = this.bullets.getFirstExists(false);
-
-        if (!bullet) {
-            bullet = new Bullet({
-                game: this.game,
-                x: this.x,
-                y: this.bottom,
-                health: 2,
-                asset: 'bullet',
-                tint: 0xff0000
-            });
-            this.bullets.add(bullet);
-        }
-        else {
-            bullet.reset(this.x, this.bottom, 2);
-        }
-
-        bullet.body.velocity.x = -this.bulletSpeed;
+    fire() {
+        this.weapon.fire(this);
     }
 
     damage(amount) {

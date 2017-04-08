@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Bullet from './Bullet';
+import Weapon from '../groups/Weapon';
 
 export default class Player extends Phaser.Sprite {
     constructor({ game, x, y, asset, frame, health }) {
@@ -18,10 +18,7 @@ export default class Player extends Phaser.Sprite {
         this.cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
-        this.bullets = this.game.add.group();
-        this.bullets.enableBody = true;
-        this.bulletSpeed = 400;
-        this.fireRate = 300;
+        this.weapon = new Weapon(this.game);
     }
 
     update() {
@@ -44,30 +41,8 @@ export default class Player extends Phaser.Sprite {
        }
 
        if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-          this.fire();
+          this.weapon.fire(this);
        }
-    }
-
-    fire() {
-      if (this.game.time.time < this.nextFire) { return; }
-      let bullet = this.bullets.getFirstExists(false);
-
-      if (!bullet) {
-          bullet = new Bullet({
-              game: this.game,
-              x: this.x,
-              y: this.y,
-              health: 3,
-              asset: 'bullet',
-              tint: 0x04c112
-          });
-          this.bullets.add(bullet);
-          this.nextFire = this.game.time.time + this.fireRate;
-      }
-      else {
-          bullet.reset(this.x, this.y, 3);
-      }
-      bullet.body.velocity.x = this.bulletSpeed;
     }
 
     damage(amount) {

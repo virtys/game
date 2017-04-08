@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 export default class StatusBar extends Phaser.Group {
-  constructor({ game, player }) {
+    constructor({ game, player }) {
         super(game);
         this.game = game;
         this.player = player;
@@ -15,19 +15,17 @@ export default class StatusBar extends Phaser.Group {
         this.scoreText = new Phaser.Text(this.game, 20, 14, this.scoreLabel + this.score, {
             font: '13px Verdana',
             fill: 'white',
-            align: 'center'
+            align: 'center',
         });
 
         this.add(this.bg);
         this.add(this.healthbar);
         this.add(this.scoreText);
     }
-    
     updateHealth() {
         this.healthbar.crop(new Phaser.Rectangle(0, 0, (this.player.health / this.player.maxHealth) * this.width, 10));
         this.healthbar.updateCrop();
     }
-
     updateScore(amount) {
         this.score += amount;
         this.scoreText.text = this.scoreLabel + (this.score * 10);
