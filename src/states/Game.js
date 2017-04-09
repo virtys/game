@@ -4,12 +4,13 @@ import Aliens from '../groups/Aliens';
 import Meteors from '../groups/Meteors';
 import PowerUps from '../groups/PowerUps';
 import StatusBar from '../groups/StatusBar';
+import config from '../config';
 
 export default class extends Phaser.State {
 
     create() {
 
-        this.background = this.add.tileSprite(0, 0, 800, 400, 'background');
+        this.background = this.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background');
 
         this.player = new Player({
             game: this.game,
@@ -27,10 +28,12 @@ export default class extends Phaser.State {
             player: this.player,
         });
 
-        this.aliens = new Aliens(this.game, this.player);
-        this.meteors = new Meteors(this.game, this.player);
-        this.powerUps = new PowerUps(this.game, 'health');
+        this.level = 1;
+        this.aliens = new Aliens(this.game, config.levels[this.level].enemiesInterval);
+        this.meteors = new Meteors(this.game, config.levels[this.level].meteorsInterval);
+        this.powerUps = new PowerUps(this.game, config.levels[this.level].bonusesInterval);
 
+        game.time.events.add(1000 * config.levels[this.level].time, this.changeLevel, this)
         // Create overlay
         this.overlayBitmap = this.add.bitmapData(this.game.width, this.game.height);
         this.overlayBitmap.ctx.fillStyle = '#000';
@@ -53,9 +56,33 @@ export default class extends Phaser.State {
         this.game.physics.arcade.overlap(this.player.weapon, this.aliens, this.hitEnemy, null, this);
         this.game.physics.arcade.overlap(this.player, this.aliens, this.crashEnemy, null, this);
         this.game.physics.arcade.overlap(this.player, this.meteors, this.crashEnemy, null, this);
+        this.game.physics.arcade.overlap(this.player, this.powerUps, this.takeBonus, null, this);
         this.aliens.forEach(alien => this.game.physics.arcade.overlap(this.player, alien.weapon, this.hitPlayer, null, this));
 
         this.background.tilePosition.x -= 2;
+    }
+
+    changeLevel() {
+      this.level++;
+      this.aliens.enemyInterval = config.levels[this.level].enemiesInterval;
+      this.meteors.enemyInterval = config.levels[this.level].meteorsInterval;
+      this.powerUps.enemyInterval = config.levels[this.level].bonusesInterval;
+
+      this.aliens.forEachAlive((e)=>e.kill());
+      this.meteors.forEachAlive((e)=>e.kill());
+      this.powerUps.forEachAlive((e)=>e.kill());
+
+      let text = game.add.text(this.game.world.centerX, this.game.world.centerY , config.levels[this.level].text, {
+        font: "bold 32px Arial",
+        fill: "#fff",
+        align: "center",
+      });
+      text.anchor.set(0.5);
+      setTimeout(function () {
+        text.kill();
+      }, 3000);
+
+      game.time.events.add(1000 * config.levels[this.level].time, this.changeLevel, this);
     }
 
     hitEffect(obj, color) {
@@ -95,6 +122,12 @@ export default class extends Phaser.State {
             this.gameOver();
         }
         bullet.kill();
+    }
+
+    takeBonus(player, bonus) {
+      player.health += bonus.health;
+      bonus.kill();
+      this.bar.updateHealth();
     }
 
     crashEnemy(player, enemy) {

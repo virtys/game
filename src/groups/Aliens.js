@@ -2,14 +2,13 @@ import Phaser from 'phaser';
 import Enemy from '../sprites/Enemy';
 
 export default class Aliens extends Phaser.Group {
-    constructor(game, player) {
+    constructor(game, enemyInterval) {
       super(game, game.world);
 
       this.game = game;
-      this.player = player;
       this.enableBody = true;
       this.enemyTime = 0;
-      this.enemyInterval = 1.8;
+      this.enemyInterval = enemyInterval;
       this.enemyShootTime = 0;
       this.enemyShootInterval = 1;
 
@@ -43,12 +42,11 @@ export default class Aliens extends Phaser.Group {
       if (this.enemyShootTime > this.enemyShootInterval) {
           this.enemyShootTime = 0;
           this.forEachAlive(enemy => enemy.fire());
-          // if (!this.player.alive) {
-          //     this.game.world.bringToTop(this.overlay);
-          // }
       }
     }
-
+    setEnemyIterval(interval) {
+      this.enemyInterval = interval;
+    }
     createEnemy(data) {
         let enemy = this.getFirstExists(false);
 

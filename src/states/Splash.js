@@ -19,15 +19,18 @@ export default class extends Phaser.State {
     this.load.image('meteor', 'assets/images/meteor.png');
     this.load.image('hudBg', 'assets/images/hud-bg.png');
     this.load.image('healthbar', 'assets/images/healthbar.png');
-    this.load.image('particle', 'assets/images/particle.gif');
+
     for (let i = 1; i < 7; i++) {
       this.load.image('enemy'+ i, 'assets/images/enemy'+ i +'.png');
     }
     for (let i = 1; i < 6; i++) {
       this.load.image('meteor'+ i, 'assets/images/meteor'+ i +'.png');
     }
-    this.load.audio('playMusic', ['assets/sounds/play.mp3']);
-    this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
+    for (let i = 1; i < 6; i++) {
+      this.load.image('part'+ i, 'assets/images/part'+ i +'.png');
+    }
+    // this.load.audio('playMusic', ['assets/sounds/play.mp3']);
+    // this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
 
   }
 

@@ -3,7 +3,14 @@ body {
     margin: 0;
     padding: 0;
 }
-
-#content canvas{
-    margin: 40px auto 0;
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: block;
+  background: #444 url('/assets/images/bg-space.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  -ms-align-items: center;
+  align-items: center;
+  justify-content: center;
 }

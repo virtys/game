@@ -2,14 +2,13 @@ import Phaser from 'phaser';
 import Enemy from '../sprites/Enemy';
 
 export default class Meteors extends Phaser.Group {
-    constructor(game, player) {
+    constructor(game, interval) {
       super(game, game.world);
 
       this.game = game;
-      this.player = player;
       this.enableBody = true;
       this.enemyTime = 0;
-      this.enemyInterval = 3;
+      this.enemyInterval = interval;
       this.enemyShootTime = 0;
       this.enemyShootInterval = 1;
 
