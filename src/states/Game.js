@@ -16,7 +16,7 @@ export default class extends Phaser.State {
             game: this.game,
             x: 40,
             y: this.game.world.centerY,
-            health: 100,
+            health: 10,
             asset: 'spaceship',
             frame: 1,
         });
@@ -63,7 +63,18 @@ export default class extends Phaser.State {
     }
 
     changeLevel() {
+      if(!this.player.alive) return;
       this.level++;
+      this.game.time.slowMotion = 3;
+      if(config.levels[this.level] == undefined) {
+        let text = game.add.text(this.game.world.centerX, this.game.world.centerY , "The End", {
+          font: "bold 32px Arial",
+          fill: "#fff",
+          align: "center",
+        });
+        return false;
+      }
+
       this.aliens.enemyInterval = config.levels[this.level].enemiesInterval;
       this.meteors.enemyInterval = config.levels[this.level].meteorsInterval;
       this.powerUps.enemyInterval = config.levels[this.level].bonusesInterval;
@@ -73,13 +84,14 @@ export default class extends Phaser.State {
       this.powerUps.forEachAlive((e)=>e.kill());
 
       let text = game.add.text(this.game.world.centerX, this.game.world.centerY , config.levels[this.level].text, {
-        font: "bold 32px Arial",
+        font: "bold 32px Press Start 2P",
         fill: "#fff",
         align: "center",
       });
       text.anchor.set(0.5);
       setTimeout(function () {
         text.kill();
+        this.game.time.slowMotion = 1;
       }, 3000);
 
       game.time.events.add(1000 * config.levels[this.level].time, this.changeLevel, this);
@@ -153,8 +165,8 @@ export default class extends Phaser.State {
         timer.add(3000, () => {
             this.music.stop();
             this.gameOverSound.play();
-            let text = game.add.text(this.game.world.centerX, this.game.world.centerY , "Game Over", {
-              font: "bold 32px Arial",
+            let text = game.add.text(this.game.world.centerX, this.game.world.centerY , `You score: ${this.bar.score}\nGame Over`, {
+              font: "bold 32px Press Start 2P",
               fill: "#fff",
               align: "center",
             });

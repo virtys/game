@@ -3,7 +3,7 @@ import WebFont from 'webfontloader'
 
 export default class extends Phaser.State {
   init () {
-    this.stage.backgroundColor = '#EDEEC9';
+    this.stage.backgroundColor = '#111';
     this.fontsReady = false;
     this.fontsLoaded = this.fontsLoaded.bind(this);
   }
@@ -11,12 +11,12 @@ export default class extends Phaser.State {
   preload () {
     WebFont.load({
       google: {
-        families: ['Bangers']
+        families: ['Press Start 2P']
       },
       active: this.fontsLoaded
     });
 
-    let text = this.add.text(this.world.centerX, this.world.centerY, 'loading fonts', { font: '16px Arial', fill: '#dddddd', align: 'center' })
+    let text = this.add.text(this.world.centerX, this.world.centerY, 'L O A D I N G  F O N T S', { font: '16px sans-serif' , fill: '#ffffff', align: 'center' })
     text.anchor.setTo(0.5, 0.5)
 
     this.load.image('loaderBg', './assets/images/loader-bg.png')

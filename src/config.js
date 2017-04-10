@@ -22,6 +22,41 @@ export default {
       enemiesInterval: 1.3,
       meteorsInterval: 3,
       bonusesInterval: 30
+    },
+    4: {
+      text: "Level 4",
+      time: 30,
+      enemiesInterval: 1.3,
+      meteorsInterval: 3,
+      bonusesInterval: 30
+    },
+    5: {
+      text: "Level 5",
+      time: 30,
+      enemiesInterval: 1.3,
+      meteorsInterval: 3,
+      bonusesInterval: 30
+    },
+    6: {
+      text: "Level 6",
+      time: 30,
+      enemiesInterval: 1.3,
+      meteorsInterval: 3,
+      bonusesInterval: 30
+    },
+    7: {
+      text: "Level 7",
+      time: 30,
+      enemiesInterval: 1.3,
+      meteorsInterval: 3,
+      bonusesInterval: 30
+    },
+    8: {
+      text: "Level 8",
+      time: 30,
+      enemiesInterval: 1.3,
+      meteorsInterval: 3,
+      bonusesInterval: 30
     }
   }
 }
