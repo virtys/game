@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import Weapon from '../groups/Weapon';
 
 export default class Player extends Phaser.Sprite {
-    constructor({ game, x, y, asset, frame, health }) {
-        super(game, x, y, asset, frame);
+    constructor({ game, x, y, asset, health }) {
+        super(game, x, y, asset);
 
         this.game = game;
         this.anchor.setTo(0.5);
@@ -18,7 +18,7 @@ export default class Player extends Phaser.Sprite {
         this.cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
-        this.weapon = new Weapon(this.game);
+        this.weapon = new Weapon(this.game, 600, 'laser');
     }
 
     update() {

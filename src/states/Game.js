@@ -9,16 +9,15 @@ import config from '../config';
 export default class extends Phaser.State {
 
     create() {
-
-        this.background = this.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background');
+        this.level = 1;
+        this.background = this.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, config.levels[this.level].background);
 
         this.player = new Player({
             game: this.game,
             x: 40,
             y: this.game.world.centerY,
-            health: 10,
-            asset: 'spaceship',
-            frame: 1,
+            health: 30,
+            asset: 'spaceship'
         });
 
         this.game.stage.addChild(this.player);
@@ -28,7 +27,6 @@ export default class extends Phaser.State {
             player: this.player,
         });
 
-        this.level = 1;
         this.aliens = new Aliens(this.game, config.levels[this.level].enemiesInterval);
         this.meteors = new Meteors(this.game, config.levels[this.level].meteorsInterval);
         this.powerUps = new PowerUps(this.game, config.levels[this.level].bonusesInterval);
@@ -44,11 +42,21 @@ export default class extends Phaser.State {
 
         // sounds
         this.music = this.game.add.audio('playMusic');
-        // this.bulletHitSound = this.add.sound('bulletHit');
-        // this.enemyExplosionSound = this.add.sound('enemyExplosion');
-        // this.playerExplosionSound = this.add.sound('playerExplosion');
         this.gameOverSound = this.add.sound('gameOver');
+        this.bonusSound = this.add.sound('takeBonus');
         this.music.loopFull();
+
+
+        let text = game.add.text(this.game.world.centerX, this.game.world.centerY , config.levels[this.level].text, {
+          font: "bold 32px Press Start 2P",
+          fill: "#fff",
+          align: "center",
+        });
+        text.anchor.set(0.5);
+        setTimeout(function () {
+          text.kill();
+        }, 3000);
+
     }
 
     update() {
@@ -65,7 +73,7 @@ export default class extends Phaser.State {
     changeLevel() {
       if(!this.player.alive) return;
       this.level++;
-      this.game.time.slowMotion = 3;
+      this.background.loadTexture(config.levels[this.level].background);
       if(config.levels[this.level] == undefined) {
         let text = game.add.text(this.game.world.centerX, this.game.world.centerY , "The End", {
           font: "bold 32px Arial",
@@ -91,7 +99,6 @@ export default class extends Phaser.State {
       text.anchor.set(0.5);
       setTimeout(function () {
         text.kill();
-        this.game.time.slowMotion = 1;
       }, 3000);
 
       game.time.events.add(1000 * config.levels[this.level].time, this.changeLevel, this);
@@ -114,29 +121,26 @@ export default class extends Phaser.State {
     }
 
     hitEnemy(bullet, enemy) {
-        // this.bulletHitSound.play("", 0, 0.5);
         enemy.damage(bullet.health);
         this.hitEffect(enemy, bullet.tint);
         if (!enemy.alive) {
-            // this.enemyExplosionSound.play("", 0, 0.5);
             this.bar.updateScore(enemy.maxHealth);
         }
         bullet.kill();
     }
 
     hitPlayer(player, bullet) {
-        // this.bulletHitSound.play("", 0, 0.5);
         player.damage(bullet.health);
         this.bar.updateHealth();
         this.hitEffect(player, 0xff0000);
         if (!player.alive) {
-            // this.playerExplosionSound.play();
             this.gameOver();
         }
         bullet.kill();
     }
 
     takeBonus(player, bonus) {
+      this.bonusSound.play();
       player.health += bonus.health;
       bonus.kill();
       this.bar.updateHealth();
@@ -148,12 +152,10 @@ export default class extends Phaser.State {
         this.hitEffect(player);
         this.hitEffect(enemy);
         if (!enemy.alive) {
-            // this.enemyExplosionSound.play("", 0, 0.5);
             this.bar.updateScore(enemy.maxHealth);
         }
         this.bar.updateHealth();
         if (!player.alive) {
-            // this.playerExplosionSound.play();
             this.gameOver();
         }
     }
@@ -165,7 +167,7 @@ export default class extends Phaser.State {
         timer.add(3000, () => {
             this.music.stop();
             this.gameOverSound.play();
-            let text = game.add.text(this.game.world.centerX, this.game.world.centerY , `You score: ${this.bar.score}\nGame Over`, {
+            let text = game.add.text(this.game.world.centerX, this.game.world.centerY , `You score: ${this.bar.score*10}\nGame Over`, {
               font: "bold 32px Press Start 2P",
               fill: "#fff",
               align: "center",

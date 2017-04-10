@@ -13,10 +13,12 @@ export default class Enemy extends Phaser.Sprite {
         this.maxHealth = health;
         this.game.physics.arcade.enable(this);
         this.bulletSpeed = - bulletSpeed;
+
         // this.shotSound = this.game.add.sound('enemyShot');
         this.weapon = new Weapon(this.game, this.bulletSpeed);
     }
     update() {
+
         if (this.position.y < 0.04 * this.game.world.height) {
             this.position.y = 0.04 * this.game.world.height + 2;
             this.body.velocity.y *= -1;

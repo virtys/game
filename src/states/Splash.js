@@ -13,12 +13,15 @@ export default class extends Phaser.State {
     //
     // load your assets
     //
-    this.load.image('background', 'assets/images/bg.png');
     this.load.image('spaceship', 'assets/images/spaceship.png');
     this.load.image('bullet', 'assets/images/laser.png');
-    this.load.image('meteor', 'assets/images/meteor.png');
+    this.load.image('laser', 'assets/images/bullets.png');
     this.load.image('hudBg', 'assets/images/hud-bg.png');
     this.load.image('healthbar', 'assets/images/healthbar.png');
+
+    for (let i = 1; i < 5; i++) {
+      this.load.image('background'+ i, 'assets/images/bg'+ i +'.png');
+    }
 
     for (let i = 1; i < 7; i++) {
       this.load.image('enemy'+ i, 'assets/images/enemy'+ i +'.png');
@@ -29,8 +32,9 @@ export default class extends Phaser.State {
     for (let i = 1; i < 6; i++) {
       this.load.image('part'+ i, 'assets/images/part'+ i +'.png');
     }
-    // this.load.audio('playMusic', ['assets/sounds/play.mp3']);
-    // this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
+    this.load.audio('playMusic', ['assets/sounds/play.mp3']);
+    this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
+    this.load.audio('takeBonus', ['assets/sounds/bonus.ogg']);
 
   }
 

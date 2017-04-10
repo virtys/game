@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import Bullet from '../sprites/Bullet';
 
 export default class Weapon extends Phaser.Group {
-    constructor(game, bulletSpeed = 600) {
+    constructor(game, bulletSpeed = 600, asset = 'bullet') {
         super(game, game.world, 'Single Bullet', false, true, Phaser.Physics.ARCADE);
 
         this.nextFire = 0;
@@ -16,7 +16,7 @@ export default class Weapon extends Phaser.Group {
               x: this.x,
               y: this.y,
               health: 3,
-              asset: 'bullet',
+              asset: asset,
             });
             this.add(bullet, true);
         }

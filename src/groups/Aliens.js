@@ -25,13 +25,14 @@ export default class Aliens extends Phaser.Group {
 
       if (this.enemyTime > this.enemyInterval) {
           this.enemyTime = 0;
+          let isFromUp = Math.random() > 0.5 ? true : false;
           this.createEnemy({
               game: this.game,
-              x: this.game.rnd.integerInRange(6, 76) * 10,
-              y: 0,
+              x: this.game.rnd.integerInRange(40, 76) * 10,
+              y: isFromUp ? 20 : this.game.height - 20,
               speed: {
                   x: this.game.rnd.integerInRange(5, 10) * 10 * (Math.random() > 0.5 ? 1 : -1),
-                  y: this.game.rnd.integerInRange(5, 10) * 10
+                  y: isFromUp ? this.game.rnd.integerInRange(5, 10) * 10 : -this.game.rnd.integerInRange(5, 10) * 10
               },
               health: 9,
               bulletSpeed: this.game.rnd.integerInRange(30, 35) * 10,

@@ -1986,6 +1986,7 @@ var Enemy = function (_Phaser$Sprite) {
         _this.maxHealth = health;
         _this.game.physics.arcade.enable(_this);
         _this.bulletSpeed = -bulletSpeed;
+
         // this.shotSound = this.game.add.sound('enemyShot');
         _this.weapon = new _Weapon2.default(_this.game, _this.bulletSpeed);
         return _this;
@@ -1994,6 +1995,7 @@ var Enemy = function (_Phaser$Sprite) {
     _createClass(Enemy, [{
         key: 'update',
         value: function update() {
+
             if (this.position.y < 0.04 * this.game.world.height) {
                 this.position.y = 0.04 * this.game.world.height + 2;
                 this.body.velocity.y *= -1;
@@ -3032,6 +3034,7 @@ exports.default = {
   levels: {
     1: {
       text: "Level 1",
+      background: 'background1',
       time: 30,
       enemiesInterval: 1.8,
       meteorsInterval: 80,
@@ -3039,6 +3042,7 @@ exports.default = {
     },
     2: {
       text: "Level 2",
+      background: 'background2',
       time: 30,
       enemiesInterval: 1.5,
       meteorsInterval: 4,
@@ -3046,41 +3050,47 @@ exports.default = {
     },
     3: {
       text: "Level 3",
+      background: 'background3',
       time: 30,
-      enemiesInterval: 1.3,
+      enemiesInterval: 1.2,
       meteorsInterval: 3,
       bonusesInterval: 30
     },
     4: {
       text: "Level 4",
       time: 30,
-      enemiesInterval: 1.3,
+      enemiesInterval: 1,
       meteorsInterval: 3,
-      bonusesInterval: 30
+      bonusesInterval: 30,
+      background: 'background4'
     },
     5: {
       text: "Level 5",
       time: 30,
-      enemiesInterval: 1.3,
+      background: 'background1',
+      enemiesInterval: 0.8,
       meteorsInterval: 3,
       bonusesInterval: 30
     },
     6: {
       text: "Level 6",
       time: 30,
-      enemiesInterval: 1.3,
+      background: 'background3',
+      enemiesInterval: 0.7,
       meteorsInterval: 3,
       bonusesInterval: 30
     },
     7: {
       text: "Level 7",
+      background: 'background4',
       time: 30,
-      enemiesInterval: 1.3,
+      enemiesInterval: 0.6,
       meteorsInterval: 3,
       bonusesInterval: 30
     },
     8: {
       text: "Level 8",
+      background: 'background2',
       time: 30,
       enemiesInterval: 1.3,
       meteorsInterval: 3,
@@ -3128,6 +3138,7 @@ var Weapon = function (_Phaser$Group) {
 
     function Weapon(game) {
         var bulletSpeed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 600;
+        var asset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'bullet';
 
         _classCallCheck(this, Weapon);
 
@@ -3144,7 +3155,7 @@ var Weapon = function (_Phaser$Group) {
                 x: _this.x,
                 y: _this.y,
                 health: 3,
-                asset: 'bullet'
+                asset: asset
             });
             _this.add(bullet, true);
         }
@@ -4226,13 +4237,14 @@ var Aliens = function (_Phaser$Group) {
 
             if (this.enemyTime > this.enemyInterval) {
                 this.enemyTime = 0;
+                var isFromUp = Math.random() > 0.5 ? true : false;
                 this.createEnemy({
                     game: this.game,
-                    x: this.game.rnd.integerInRange(6, 76) * 10,
-                    y: 0,
+                    x: this.game.rnd.integerInRange(40, 76) * 10,
+                    y: isFromUp ? 20 : this.game.height - 20,
                     speed: {
                         x: this.game.rnd.integerInRange(5, 10) * 10 * (Math.random() > 0.5 ? 1 : -1),
-                        y: this.game.rnd.integerInRange(5, 10) * 10
+                        y: isFromUp ? this.game.rnd.integerInRange(5, 10) * 10 : -this.game.rnd.integerInRange(5, 10) * 10
                     },
                     health: 9,
                     bulletSpeed: this.game.rnd.integerInRange(30, 35) * 10,
@@ -4675,12 +4687,11 @@ var Player = function (_Phaser$Sprite) {
             x = _ref.x,
             y = _ref.y,
             asset = _ref.asset,
-            frame = _ref.frame,
             health = _ref.health;
 
         _classCallCheck(this, Player);
 
-        var _this = _possibleConstructorReturn(this, (Player.__proto__ || Object.getPrototypeOf(Player)).call(this, game, x, y, asset, frame));
+        var _this = _possibleConstructorReturn(this, (Player.__proto__ || Object.getPrototypeOf(Player)).call(this, game, x, y, asset));
 
         _this.game = game;
         _this.anchor.setTo(0.5);
@@ -4695,7 +4706,7 @@ var Player = function (_Phaser$Sprite) {
         _this.cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([_phaser2.default.Keyboard.SPACEBAR]);
 
-        _this.weapon = new _Weapon2.default(_this.game);
+        _this.weapon = new _Weapon2.default(_this.game, 600, 'laser');
         return _this;
     }
 
@@ -4885,16 +4896,15 @@ var _class = function (_Phaser$State) {
     _createClass(_class, [{
         key: 'create',
         value: function create() {
-
-            this.background = this.add.tileSprite(0, 0, _config2.default.gameWidth, _config2.default.gameHeight, 'background');
+            this.level = 1;
+            this.background = this.add.tileSprite(0, 0, _config2.default.gameWidth, _config2.default.gameHeight, _config2.default.levels[this.level].background);
 
             this.player = new _Player2.default({
                 game: this.game,
                 x: 40,
                 y: this.game.world.centerY,
-                health: 10,
-                asset: 'spaceship',
-                frame: 1
+                health: 30,
+                asset: 'spaceship'
             });
 
             this.game.stage.addChild(this.player);
@@ -4904,7 +4914,6 @@ var _class = function (_Phaser$State) {
                 player: this.player
             });
 
-            this.level = 1;
             this.aliens = new _Aliens2.default(this.game, _config2.default.levels[this.level].enemiesInterval);
             this.meteors = new _Meteors2.default(this.game, _config2.default.levels[this.level].meteorsInterval);
             this.powerUps = new _PowerUps2.default(this.game, _config2.default.levels[this.level].bonusesInterval);
@@ -4920,11 +4929,19 @@ var _class = function (_Phaser$State) {
 
             // sounds
             this.music = this.game.add.audio('playMusic');
-            // this.bulletHitSound = this.add.sound('bulletHit');
-            // this.enemyExplosionSound = this.add.sound('enemyExplosion');
-            // this.playerExplosionSound = this.add.sound('playerExplosion');
             this.gameOverSound = this.add.sound('gameOver');
+            this.bonusSound = this.add.sound('takeBonus');
             this.music.loopFull();
+
+            var text = game.add.text(this.game.world.centerX, this.game.world.centerY, _config2.default.levels[this.level].text, {
+                font: "bold 32px Press Start 2P",
+                fill: "#fff",
+                align: "center"
+            });
+            text.anchor.set(0.5);
+            setTimeout(function () {
+                text.kill();
+            }, 3000);
         }
     }, {
         key: 'update',
@@ -4946,7 +4963,7 @@ var _class = function (_Phaser$State) {
         value: function changeLevel() {
             if (!this.player.alive) return;
             this.level++;
-            this.game.time.slowMotion = 3;
+            this.background.loadTexture(_config2.default.levels[this.level].background);
             if (_config2.default.levels[this.level] == undefined) {
                 var _text = game.add.text(this.game.world.centerX, this.game.world.centerY, "The End", {
                     font: "bold 32px Arial",
@@ -4978,7 +4995,6 @@ var _class = function (_Phaser$State) {
             text.anchor.set(0.5);
             setTimeout(function () {
                 text.kill();
-                this.game.time.slowMotion = 1;
             }, 3000);
 
             game.time.events.add(1000 * _config2.default.levels[this.level].time, this.changeLevel, this);
@@ -5003,11 +5019,9 @@ var _class = function (_Phaser$State) {
     }, {
         key: 'hitEnemy',
         value: function hitEnemy(bullet, enemy) {
-            // this.bulletHitSound.play("", 0, 0.5);
             enemy.damage(bullet.health);
             this.hitEffect(enemy, bullet.tint);
             if (!enemy.alive) {
-                // this.enemyExplosionSound.play("", 0, 0.5);
                 this.bar.updateScore(enemy.maxHealth);
             }
             bullet.kill();
@@ -5015,12 +5029,10 @@ var _class = function (_Phaser$State) {
     }, {
         key: 'hitPlayer',
         value: function hitPlayer(player, bullet) {
-            // this.bulletHitSound.play("", 0, 0.5);
             player.damage(bullet.health);
             this.bar.updateHealth();
             this.hitEffect(player, 0xff0000);
             if (!player.alive) {
-                // this.playerExplosionSound.play();
                 this.gameOver();
             }
             bullet.kill();
@@ -5028,6 +5040,7 @@ var _class = function (_Phaser$State) {
     }, {
         key: 'takeBonus',
         value: function takeBonus(player, bonus) {
+            this.bonusSound.play();
             player.health += bonus.health;
             bonus.kill();
             this.bar.updateHealth();
@@ -5040,12 +5053,10 @@ var _class = function (_Phaser$State) {
             this.hitEffect(player);
             this.hitEffect(enemy);
             if (!enemy.alive) {
-                // this.enemyExplosionSound.play("", 0, 0.5);
                 this.bar.updateScore(enemy.maxHealth);
             }
             this.bar.updateHealth();
             if (!player.alive) {
-                // this.playerExplosionSound.play();
                 this.gameOver();
             }
         }
@@ -5061,7 +5072,7 @@ var _class = function (_Phaser$State) {
             timer.add(3000, function () {
                 _this3.music.stop();
                 _this3.gameOverSound.play();
-                var text = game.add.text(_this3.game.world.centerX, _this3.game.world.centerY, 'You score: ' + _this3.bar.score + '\nGame Over', {
+                var text = game.add.text(_this3.game.world.centerX, _this3.game.world.centerY, 'You score: ' + _this3.bar.score * 10 + '\nGame Over', {
                     font: "bold 32px Press Start 2P",
                     fill: "#fff",
                     align: "center"
@@ -5131,24 +5142,28 @@ var _class = function (_Phaser$State) {
       //
       // load your assets
       //
-      this.load.image('background', 'assets/images/bg.png');
       this.load.image('spaceship', 'assets/images/spaceship.png');
       this.load.image('bullet', 'assets/images/laser.png');
-      this.load.image('meteor', 'assets/images/meteor.png');
+      this.load.image('laser', 'assets/images/bullets.png');
       this.load.image('hudBg', 'assets/images/hud-bg.png');
       this.load.image('healthbar', 'assets/images/healthbar.png');
 
-      for (var i = 1; i < 7; i++) {
-        this.load.image('enemy' + i, 'assets/images/enemy' + i + '.png');
+      for (var i = 1; i < 5; i++) {
+        this.load.image('background' + i, 'assets/images/bg' + i + '.png');
       }
-      for (var _i = 1; _i < 6; _i++) {
-        this.load.image('meteor' + _i, 'assets/images/meteor' + _i + '.png');
+
+      for (var _i = 1; _i < 7; _i++) {
+        this.load.image('enemy' + _i, 'assets/images/enemy' + _i + '.png');
       }
       for (var _i2 = 1; _i2 < 6; _i2++) {
-        this.load.image('part' + _i2, 'assets/images/part' + _i2 + '.png');
+        this.load.image('meteor' + _i2, 'assets/images/meteor' + _i2 + '.png');
       }
-      // this.load.audio('playMusic', ['assets/sounds/play.mp3']);
-      // this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
+      for (var _i3 = 1; _i3 < 6; _i3++) {
+        this.load.image('part' + _i3, 'assets/images/part' + _i3 + '.png');
+      }
+      this.load.audio('playMusic', ['assets/sounds/play.mp3']);
+      this.load.audio('gameOver', ['assets/sounds/game-over.mp3']);
+      this.load.audio('takeBonus', ['assets/sounds/bonus.ogg']);
     }
   }, {
     key: 'create',
