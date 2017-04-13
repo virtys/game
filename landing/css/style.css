@@ -2,13 +2,18 @@ body {
   /*font-family: "Open Sans";*/
 }
 
-.bg-gradient {
-  color: #ffffff;
-  background: #36D1DC;
-  background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);
-  background: linear-gradient(to right, #5B86E5, #36D1DC);
+img {
+  max-width: 100%;
+  height: auto;
 }
 
+.bg-gradient {
+  color: #ffffff;
+  background: url('../img/bg1.png') repeat center center;
+}
+.bg-grey {
+  background-color: #f4f4f4;
+}
 .bg-gradient a:not(.btn-secondary) {
   color: #ffffff;
 }
@@ -83,18 +88,24 @@ body {
    padding: 3rem 0;
  }
 
- section.hero p.lead{
+ section.hero h1 {
+   font-size: 5rem;
+ }
+ section.hero p{
    margin-bottom: 30px;
  }
-
+section.call-to-action {
+  padding: 5rem 0;
+}
 /*
  * Features
  */
  .feature {
    padding: 0 20px;
  }
- .feature .feature-icon{
-   font-size: 56px;
+ .feature .feature-media img{
+   max-width: 100px;
+   height: auto;
  }
  .feature h4 {
    margin-bottom: 20px;
