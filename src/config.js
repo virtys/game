@@ -30,7 +30,7 @@ export default {
       text: "Level 4",
       time: 30,
       enemiesInterval: 1,
-      meteorsInterval: 3,
+      meteorsInterval: 2.5,
       bonusesInterval: 30,
       background: 'background4',
     },
@@ -39,7 +39,7 @@ export default {
       time: 30,
       background: 'background1',
       enemiesInterval: 0.8,
-      meteorsInterval: 3,
+      meteorsInterval: 2.3,
       bonusesInterval: 30
     },
     6: {
@@ -62,7 +62,7 @@ export default {
       text: "Level 8",
       background: 'background2',
       time: 30,
-      enemiesInterval: 1.3,
+      enemiesInterval: 0.3,
       meteorsInterval: 3,
       bonusesInterval: 30
     }
